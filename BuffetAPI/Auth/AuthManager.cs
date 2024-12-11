@@ -1,4 +1,4 @@
-﻿using BuffetAPI.Models;
+﻿using BuffetAPI.Models.Accounts;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,7 +13,7 @@ namespace BuffetAPI.Auth
         private readonly IConfiguration _configuration = configuration;
         private IdentityUser _user;
 
-        public async Task<AuthResponse> Login(Login login)
+        public async Task<AuthResponse> Login(LoginDto login)
         {
             _user = await _userManager.FindByNameAsync(login.Username);
             bool isValidUser = _user is not null
@@ -33,7 +33,7 @@ namespace BuffetAPI.Auth
 
         }
 
-        public async Task<IEnumerable<IdentityError>> RegisterOgre(Register register)
+        public async Task<IEnumerable<IdentityError>> RegisterOgre(RegisterDto register)
         {
             IdentityUser user = new IdentityUser
             {
@@ -49,7 +49,7 @@ namespace BuffetAPI.Auth
         }
 
 
-        public async Task<IEnumerable<IdentityError>> RegisterCuisinier(Register register)
+        public async Task<IEnumerable<IdentityError>> RegisterCuisinier(RegisterDto register)
         {
             IdentityUser user = new IdentityUser
             {

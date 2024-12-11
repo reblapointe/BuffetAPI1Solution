@@ -9,16 +9,20 @@ using BuffetAPI.Data;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using BuffetAPI.Migrations;
+using BuffetAPI.Models.Plats;
+using AutoMapper;
 
 namespace BuffetAPI.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
     [ApiController]
-    public class PlatsController(BuffetAPIContext context, ILogger<PlatsController> logger) : ControllerBase
+    public class PlatsController(BuffetAPIContext context, ILogger<PlatsController> logger, IMapper mapper) : ControllerBase
     {
         private readonly BuffetAPIContext _context = context;
         private readonly ILogger<PlatsController> _logger = logger;
+        private readonly IMapper _mapper = mapper;
 
         // GET: api/Plats/citation
         [HttpGet("citation")]
@@ -72,9 +76,9 @@ namespace BuffetAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         [Authorize(Roles = "Cuisinier")]
-        public async Task<IActionResult> PutPlat(int id, Plat plat) //dto
+        public async Task<IActionResult> PutPlat(int id, PutPlatDto platDto)
         {
-            if (id != plat.Id)
+            if (id != platDto.Id)
             {
                 return BadRequest();
             }
@@ -87,16 +91,15 @@ namespace BuffetAPI.Controllers
                 return Unauthorized();
 
 
-            var typePlat = await _context.TypePlat.FindAsync(plat.TypePlatId);
+            var typePlat = await _context.TypePlat.FindAsync(platDto.TypePlatId);
             if (typePlat == null)
             {
-                _logger.LogWarning("Le client a demandé le type plat {Typeplat}, qui n'existe pas.", plat.TypePlatId);
-                return NotFound($"Le type de plat #{plat.TypePlatId} n'existe pas.");
+                _logger.LogWarning("Le client a demandé le type plat {Typeplat}, qui n'existe pas.", platDto.TypePlatId);
+                return NotFound($"Le type de plat #{platDto.TypePlatId} n'existe pas.");
 
             }
-            platModifie.Nom = plat.Nom;
-            platModifie.Prix = plat.Prix;
-            platModifie.TypePlatId = plat.TypePlatId;
+
+            _mapper.Map(platDto, platModifie);
 
             try
             {
@@ -122,8 +125,9 @@ namespace BuffetAPI.Controllers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         [Authorize(Roles = "Cuisinier")]
-        public async Task<ActionResult<Plat>> PostPlat(Plat plat) //dto
+        public async Task<ActionResult<PostPlatDto>> PostPlat(PostPlatDto platDto) //dto
         {
+            Plat plat = _mapper.Map<Plat>(platDto);
             plat.CuisinierId = GetUserName();
             if (plat.CuisinierId == null)
                 return Unauthorized();

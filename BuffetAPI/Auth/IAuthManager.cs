@@ -1,13 +1,13 @@
-﻿using BuffetAPI.Models;
+﻿using BuffetAPI.Models.Accounts;
 using Microsoft.AspNetCore.Identity;
 
 namespace BuffetAPI.Auth
 {
     public interface IAuthManager
     {
-        Task<IEnumerable<IdentityError>> RegisterOgre(Register register);
-        Task<IEnumerable<IdentityError>> RegisterCuisinier(Register register);
-        Task<AuthResponse> Login(Login login);
+        Task<IEnumerable<IdentityError>> RegisterOgre(RegisterDto register);
+        Task<IEnumerable<IdentityError>> RegisterCuisinier(RegisterDto register);
+        Task<AuthResponse> Login(LoginDto login);
 
     }
 }

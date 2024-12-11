@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BuffetAPI.Auth;
+using BuffetAPI.Configurations;
 
 namespace BuffetAPI
 {
@@ -36,6 +37,7 @@ namespace BuffetAPI
                 config.WriteTo.Console().ReadFrom.Configuration(context.Configuration);
             });
 
+            builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
             builder.Services.AddAuthentication(options =>
             {
